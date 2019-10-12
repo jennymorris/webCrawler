@@ -1,0 +1,23 @@
+sudo apt-get update
+sudo apt-get install build-essential -y
+sudo apt-get install ruby ruby-dev -y
+sudo apt-get install zlib1g-dev -y
+sudo apt-get install libsqlite3-dev -y
+sudo apt-get install xvfb -y
+sudo apt-get install libpq-dev
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+sudo dpkg -i google-chrome-stable_current_amd64.deb
+sudo apt --fix-broken install
+git clone
+# Swap Memory reference: https://linuxize.com/post/how-to-add-swap-space-on-ubuntu-18-04/
+sudo fallocate -l 1G /swapfile
+sudo dd if=/dev/zero of=/swapfile bs=1024 count=1048576
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+sudo nano /etc/fstab
+/swapfile swap swap defaults 0 0
+sudo free -h
+sudo gem install bundler
+
+add buldpkac
