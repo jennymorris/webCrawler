@@ -19,8 +19,7 @@ class EsClient
         self.client = Elasticsearch::Client.new hosts: [
               { user: ENV['ES_USER'],
                 password: ENV['ES_PASSWORD'],
-                cloud_id: ENV['ES_CLOUD_ID'],
-                port: 9243
+                cloud_id: ENV['ES_CLOUD_ID']
               }]
       end
     else
