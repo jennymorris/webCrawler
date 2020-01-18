@@ -13,7 +13,7 @@ class ProcessScrape
     all_data = []
 
     browser.goto(url)
-    [*0..25].each do |x|
+    [*0..2].each do |x|
       begin
         #check if the url is already scraped before
         normalize_url = browser.url.split("?").first

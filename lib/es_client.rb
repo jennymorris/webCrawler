@@ -4,6 +4,7 @@ class EsClient
   attr_accessor :client, :index_name
 
   def initialize(config = nil)
+    binding.pry
     if config.nil?
       es_source = ENV['ES_SOURCE'] rescue 'production'
       self.index_name = ENV['ES_INDEX_NAME']

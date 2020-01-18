@@ -77,6 +77,7 @@ class ProcessScrape
   
       if scraped_data != url_content
         self.db_client.update_scrape_url_status(url["id"], 1 , scraped_data.to_json)
+        puts "INDEX DATA"
         es_client.index_data([scraped_data])
       end
       sleep(rand(1..2))

@@ -14,7 +14,7 @@ require 'lib/nyd/process_scrape'
 require 'lib/db/pg_client'
 
 
-if `ps -C 'ruby scraper.rb' | wc -l`.to_i > 2
+if `ps -C 'scraper_nyd.rb' | wc -l`.to_i > 2
   puts 'another process already running'
   exit
 end
@@ -60,7 +60,7 @@ end
 
 options = Selenium::WebDriver::Chrome::Options.new
 options.add_argument('--disable-infobars')
-options.add_argument('--headless')
+# options.add_argument('--headless')
 user_agent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.50 Safari/537.36'
 options.add_argument('--user-agent=' + user_agent)
 options.add_argument('--disable-gpu')
@@ -72,7 +72,7 @@ scraper = ProcessScrape.new(browser, db, es_client)
 blacklist_keyword = ['sleepwear', 'lingerie', 'swimwear', 'uncommon-sense', 'belts', 'tights-socks', 'beauty']
 url = "https://www.nyandcompany.com/sitemap/"
 
-parent_urls = db.get_all_parents.to_a
+parent_urls = db.get_all_parents(1).to_a
 
 if parent_urls.empty?
   browser.goto(url)
@@ -80,12 +80,12 @@ if parent_urls.empty?
   
   parent_urls.each do |url|
     begin
-      db.insert_url(url)
+      db.insert_url(url,1)
     rescue Exception => e
       puts e.message
     end
   end
-  parent_urls = db.get_all_parents.to_a
+  parent_urls = db.get_all_parents(1).to_a
 end
 
 parent_urls.each do |parent_url|
