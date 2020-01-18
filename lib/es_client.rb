@@ -4,7 +4,6 @@ class EsClient
   attr_accessor :client, :index_name
 
   def initialize(config = nil)
-    binding.pry
     if config.nil?
       es_source = ENV['ES_SOURCE'] rescue 'production'
       self.index_name = ENV['ES_INDEX_NAME']
@@ -18,9 +17,10 @@ class EsClient
               }]
       when 'elastic_cloud'
         self.client = Elasticsearch::Client.new hosts: [
-              { user: ENV['ES_HOST'],
+              { user: ENV['ES_USER'],
                 password: ENV['ES_PASSWORD'],
-                cloud_id: ENV['ES_CLOUD_ID']
+                cloud_id: ENV['ES_CLOUD_ID'],
+                port: 9243
               }]
       end
     else
