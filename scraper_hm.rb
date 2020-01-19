@@ -98,7 +98,7 @@ parent_urls = get_all_parent_urls(db, browser)
 parent_urls.each do |parent_url|
 
   skip = false
-  blacklist_keyword = ['javascript:void()','https://play.google.com/store/apps/details?id=com.hm.goe']
+  blacklist_keyword = ['javascript:void()','play.google']
   blacklist_keyword.each do |keyword|
     skip = parent_url["url"].match?(keyword)
     if skip
@@ -133,6 +133,7 @@ parent_urls.each do |parent_url|
         browser.button(class: ['button','js-load-more']).click
         sleep(5)
         counter += 1
+        puts "get child iteration #{counter}"
 
         break if counter == 5 && parent_url['url'].match?('view-all')
       rescue Exception => e
@@ -146,6 +147,7 @@ parent_urls.each do |parent_url|
 
       child_urls.each do |url|
         begin
+          puts "insert #{url}"
           db.insert_children_url(parent_url['id'], url, 0, nil)
         rescue
           puts "Child URL Already exist"
