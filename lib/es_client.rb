@@ -16,15 +16,16 @@ class EsClient
                 password: ENV['ES_PASSWORD']
               }]
       when 'elastic_cloud'
-        self.client = Elasticsearch::Client.new hosts: [
+        self.client = Elasticsearch::Client.new(
               { user: ENV['ES_USER'],
                 password: ENV['ES_PASSWORD'],
                 cloud_id: ENV['ES_CLOUD_ID']
-              }]
+              })
       end
     else
       es_source = config.es_source rescue 'local'
       self.index_name = config.index_name
+
       case es_source
       when 'local'
         self.client = Elasticsearch::Client.new hosts: [
@@ -39,11 +40,14 @@ class EsClient
                         password: config.password
                       }]
       when 'elastic_cloud'
-        self.client = Elasticsearch::Client.new hosts: [
-              { user: config.es_host,
-                password: config.port,
-                cloud_id: config.cloud_id
-              }]
+        self.client = Elasticsearch::Client.new(
+          {                 
+            cloud_id: config.cloud_id,
+            user: config.user,
+            password: config.password
+          }
+        )
+          
       end
     end
     
