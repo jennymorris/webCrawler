@@ -112,8 +112,13 @@ parent_urls.each do |parent_url|
   end
 
   next if skip
-  puts parent_url["url"]
-  browser.goto(parent_url["url"])
+  puts "Go to #{parent_url["url"]}"
+  begin
+    browser.goto(parent_url["url"])
+  rescue Exception => e 
+    next
+  end
+  
 
   next unless browser.ul(class: ['products-listing']).present?
 
@@ -123,6 +128,7 @@ parent_urls.each do |parent_url|
 
     counter = 0
     loop do
+      puts "get child urls"
       begin
         browser.button(class: ['button','js-load-more']).click
         sleep(5)
