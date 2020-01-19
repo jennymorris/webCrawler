@@ -128,7 +128,7 @@ parent_urls.each do |parent_url|
         sleep(5)
         counter += 1
 
-        break if counter == 2 && parent_url['url'].match?('view-all')
+        break if counter == 10 && parent_url['url'].match?('view-all')
       rescue Exception => e
         puts e.message
         break
