@@ -40,7 +40,7 @@ class EsClient
                       }]
       when 'elastic_cloud'
         self.client = Elasticsearch::Client.new hosts: [
-              { user: config.es_host,
+              { user: config.user,
                 password: config.port,
                 cloud_id: config.cloud_id
               }]
