@@ -112,7 +112,7 @@ parent_urls.each do |parent_url|
   end
 
   next if skip
-
+  puts parent_url["url"]
   browser.goto(parent_url["url"])
 
   next unless browser.ul(class: ['products-listing']).present?

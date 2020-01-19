@@ -41,7 +41,7 @@ class EsClient
       when 'elastic_cloud'
         self.client = Elasticsearch::Client.new(
               { user: config.user,
-                password: config.port,
+                password: config.password,
                 cloud_id: config.cloud_id
               })
       end
