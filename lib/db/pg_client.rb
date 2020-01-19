@@ -38,6 +38,10 @@ class PgClient
     execute_query('SELECT * FROM urls where parent_id = $1 AND scraped < 1 ORDER BY ID DESC LIMIT 1', [parent_url_id])
   end
 
+  def get_all_child_urls(parent_url_id)
+    execute_query('SELECT * FROM urls where parent_id = $1 AND scraped < 1 ORDER BY ID DESC', [parent_url_id])
+  end
+
   def insert_children_url(parent_id, url, status, content)
     execute_query('INSERT INTO urls (url, parent_id, scraped, content) VALUES ($1,$2, $3, $4)', [url, parent_id, status,content])
   end

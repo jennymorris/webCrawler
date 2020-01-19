@@ -122,7 +122,7 @@ parent_urls.each do |parent_url|
 
   next unless browser.ul(class: ['products-listing']).present?
 
-  child_urls = db.get_child_urls(parent_url["id"]).to_a
+  child_urls = db.get_all_child_urls(parent_url["id"]).to_a
 
   if child_urls.empty?
     puts "get child urls"
@@ -152,7 +152,7 @@ parent_urls.each do |parent_url|
         end
       end
 
-    child_urls = db.get_child_urls(parent_url["id"]).to_a
+    child_urls = db.get_all_child_urls(parent_url["id"]).to_a
   end
 
   child_urls.each do |url|
