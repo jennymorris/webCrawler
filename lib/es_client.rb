@@ -16,7 +16,7 @@ class EsClient
                 password: ENV['ES_PASSWORD']
               }]
       when 'elastic_cloud'
-        self.client = Elasticsearch::Client.new hosts(
+        self.client = Elasticsearch::Client.new(
               { user: ENV['ES_USER'],
                 password: ENV['ES_PASSWORD'],
                 cloud_id: ENV['ES_CLOUD_ID']
