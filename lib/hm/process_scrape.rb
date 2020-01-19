@@ -49,28 +49,36 @@ class ProcessScrape
 
       #Get Size
 
-      colors = browser.div(class: ['product-colors']).links
-      colors.each do |color|
-        color.click
-          sleep(rand(2..3))
-        _color = {
-          :color_name => color.title,
-          :image => color.img.src,
-          :size => {}
-        }
-
-        browser.button(class: ['picker-trigger','js-picker-trigger']).click
-        browser.ul(class: ['picker-list','js-active-list']).lis.each do |_li|
-
-          size = _li.spans.first.text
-          stock = true
-          if _li.spans.count > 1
-            stock = false if _li.spans.last.text == 'Notify me'
+      begin
+        colors = browser.div(class: ['product-colors']).links
+        colors.each do |color|
+          color.click
+            sleep(rand(2..3))
+          _color = {
+            :color_name => color.title,
+            :image => color.img.src,
+            :size => {}
+          }
+          begin
+            browser.button(class: ['picker-trigger','js-picker-trigger']).click
+            browser.ul(class: ['picker-list','js-active-list']).lis.each do |_li|
+    
+              size = _li.spans.first.text
+              stock = true
+              if _li.spans.count > 1
+                stock = false if _li.spans.last.text == 'Notify me'
+              end
+              _color[:size][_li.text] =  stock
+            end
+            scraped_data[:color].push(_color)
+          rescue Exception => e
+            scraped_data[:color].push(_color)
           end
-          _color[:size][_li.text] =  stock
         end
-        scraped_data[:color].push(_color)
+      rescue Exception => e
+        puts "Get color failed!!!"
       end
+
 
       #check if
       url_content = url['content'].nil? ? {} : JSON.parse(url['content'])
@@ -82,6 +90,7 @@ class ProcessScrape
       end
       sleep(rand(1..2))
     rescue Exception => e
+      puts "ERROR!"
       puts e.message
     end
   end

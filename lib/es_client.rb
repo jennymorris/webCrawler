@@ -107,7 +107,6 @@ class EsClient
       data_structure[:review]       = datum[:review]
       data_structure[:category]     = datum[:category]
       data_structure[:description]  = datum[:description]
-      
 
       if !datum[:size].nil?
         data_structure[:price]        = datum[:price]
@@ -136,17 +135,29 @@ class EsClient
           data_structure[:color] = color[:color_name]
           data_structure[:image] = color[:image]
 
-          color[:size].each do |key, value| 
-            data_structure[:size] = key
+          if color[:size].empty?
             index = {
               index: {
                 _index: self.index_name,
                 _type: '_doc',
-                _id: datum[:url]+key+color[:color_name],
+                _id: datum[:url]+"nosize"+color[:color_name],
                 data: data_structure
               }
             }
-            constructed_data.push(index.dup)
+            constructed_data.push(index.dup) 
+          else
+            color[:size].each do |key, value| 
+              data_structure[:size] = key
+              index = {
+                index: {
+                  _index: self.index_name,
+                  _type: '_doc',
+                  _id: datum[:url]+key+color[:color_name],
+                  data: data_structure
+                }
+              }
+              constructed_data.push(index.dup)
+            end
           end
         end
       end
