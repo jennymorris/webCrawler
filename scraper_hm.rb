@@ -83,7 +83,7 @@ end
 
 options = Selenium::WebDriver::Chrome::Options.new
 options.add_argument('--disable-infobars')
-# options.add_argument('--headless')
+options.add_argument('--headless')
 user_agent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.50 Safari/537.36'
 options.add_argument('--user-agent=' + user_agent)
 options.add_argument('--disable-gpu')
@@ -138,7 +138,7 @@ parent_urls.each do |parent_url|
         counter += 1
         puts "get child iteration #{counter}"
 
-        break if counter == 5 && parent_url['url'].match?('view-all')
+        break if counter == 5 || parent_url['url'].match?('view-all')
       rescue Exception => e
         puts e.message
         break
