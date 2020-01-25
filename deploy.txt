@@ -26,3 +26,4 @@ heroku login
 heroku create
 include addon heroku postgres in heroku console
 add buildpack in heroku console with this github url 'https://github.com/heroku/heroku-buildpack-google-chrome'
+add heroku scheduler
