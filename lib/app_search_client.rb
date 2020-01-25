@@ -40,7 +40,7 @@ class AppSearchClient
           end
         end
       elsif !datum[:color].nil?
-        data_structure[:price]        = {"regPrice" => datum[:price]}
+        data_structure[:price]        = {"regprice" => datum[:price]}
         datum[:color].each do |color| 
           data_structure[:color] = color[:color_name]
           data_structure[:image] = color[:image]

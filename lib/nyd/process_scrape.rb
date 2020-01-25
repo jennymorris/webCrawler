@@ -53,7 +53,7 @@ class ProcessScrape
         end
 
         if scraped_data[:price].empty?
-          scraped_data[:price]["regPrice"] = browser.p(id: 'productPrice').text
+          scraped_data[:price]["regprice"] = browser.p(id: 'productPrice').text
         end
 
         #Get description
@@ -97,6 +97,7 @@ class ProcessScrape
 
           #push the data 
           scraped_data[:size].push(_size)
+          scraped_data[:site_source] = 'NYD'
         end
         
         all_data.push(scraped_data)

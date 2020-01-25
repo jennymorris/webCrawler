@@ -1,9 +1,13 @@
 require 'elasticsearch'
 
 class EsClient
-  attr_accessor :client, :index_name
+  attr_accessor :client, :index_name, :type_list
 
   def initialize(config = nil)
+    self.type_list = ['shoes', 'jeans', 'bags','shirts',
+                      'pants', 'tops', 'skirts', 'handbags',
+                      'earings', 'dress', 'necklace'
+                      ]
     if config.nil?
       es_source = ENV['ES_SOURCE'] rescue 'production'
       self.index_name = ENV['ES_INDEX_NAME']
@@ -87,6 +91,12 @@ class EsClient
           },
           stock: {
             type: "boolean"
+          },
+          cat_type: {
+            type: "keyword"
+          },
+          site_source: {
+            type: "keyword"
           }
         }
       }
@@ -107,6 +117,10 @@ class EsClient
       data_structure[:review]       = datum[:review]
       data_structure[:category]     = datum[:category]
       data_structure[:description]  = datum[:description]
+      cat_type = self.type_list.select{|x| datum[:description].downcase.match?(x)}.first
+      data_structure[:cat_type]     = cat_type.nil? ? 'other' : cat_type
+      data_structure[:site_source]  = datum[:site_source]
+
 
       if !datum[:size].nil?
         data_structure[:price]        = datum[:price]
@@ -123,7 +137,7 @@ class EsClient
                 _index: self.index_name,
                 _type: '_doc',
                 _id: datum[:url]+size[:size_name]+color,
-                data: data_structure
+                data: data_structure.dup
               }
             }
             constructed_data.push(index.dup)
@@ -153,7 +167,7 @@ class EsClient
                   _index: self.index_name,
                   _type: '_doc',
                   _id: datum[:url]+key+color[:color_name],
-                  data: data_structure
+                  data: data_structure.dup
                 }
               }
               constructed_data.push(index.dup)
