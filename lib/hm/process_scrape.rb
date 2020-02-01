@@ -97,9 +97,13 @@ class ProcessScrape
       url_content = url['content'].nil? ? {} : JSON.parse(url['content'])
   
       if scraped_data != url_content
-        self.db_client.update_scrape_url_status(url["id"], 1 , scraped_data.to_json)
         puts "INDEX DATA"
-        es_client.index_data([scraped_data])
+        result = es_client.index_data([scraped_data])
+        if result["errors"]
+          self.db_client.update_scrape_url_status(url["id"], -1 , scraped_data.to_json)
+        else
+          self.db_client.update_scrape_url_status(url["id"], 1 , scraped_data.to_json)
+        end
       end
       sleep(rand(1..2))
     rescue Exception => e

@@ -162,7 +162,7 @@ parent_urls.each do |parent_url|
 
   child_urls.each do |url|
     puts "Scraping #{url}"
-   scraper.run_scrape(url, parent_url["id"])
+    scraper.run_scrape(url, parent_url["id"])
   end
 
   db.update_scrape_url_status(parent_url["id"],1)

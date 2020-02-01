@@ -1,12 +1,16 @@
+require 'open-uri'
+require 'digest'
+
 class ProcessScrape
 
-  attr_accessor :browser, :start_url, :next_url, :db_client, :es_client
+  attr_accessor :browser, :start_url, :next_url, :db_client, :es_client, :storage_client
 
-  def initialize(browser, db_client,es_client)
+  def initialize(browser, db_client, es_client, storage_client)
     self.browser = browser
     self.next_url = nil
     self.db_client = db_client
     self.es_client = es_client
+    self.storage_client = storage_client
   end
 
   def run_scrape(url, parent_id)
@@ -85,13 +89,21 @@ class ProcessScrape
             begin
               color.click
               sleep(rand(1..2))
-              _size[:color_list][color.child.title.gsub("Has Been Selected","")] = browser.execute_script("return document.getElementsByTagName('canvas')[1].view.url;")
-            
+              #Get Image URL, Download, Upload to S3 and save presigned url for 1 week
+              image_uri = browser.execute_script("return document.getElementsByTagName('canvas')[1].view.url;")
+              color_name = color.child.title.gsub("Has Been Selected","")
+              download = open("https:#{image_uri}")
+              filepath = download.to_path
+              filename   = Digest::SHA256.hexdigest(normalize_url + "-" + color_name)
+              signed_url = self.storage_client.upload_object(filename, filepath, 'NYD')
+
+              _size[:color_list][color_name] = signed_url
+
               #get item stock
               stock = browser.input(id: 'availabilityType').value == 'available'
               _size[:stock] = stock
-            rescue
-              puts "Can't Get Color, might be undefined structure"  
+            rescue Exception => e
+              puts "Can't Get Color, might be undefined structure or #{e.message}"  
             end
           end
 

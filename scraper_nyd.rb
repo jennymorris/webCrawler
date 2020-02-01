@@ -12,6 +12,7 @@ require 'lib/es_client'
 require 'lib/app_search_client'
 require 'lib/nyd/process_scrape'
 require 'lib/db/pg_client'
+require 'lib/storage/storage_client'
 
 
 if `ps -C 'scraper_nyd.rb' | wc -l`.to_i > 2
@@ -40,6 +41,7 @@ if use_heroku
   end
 
   db = PgClient.new()
+  storage = StorageClient.new()
 else
   use_app_search =  general_config.use_app_search rescue false
 
@@ -52,6 +54,10 @@ else
   end
   db_config         = Configuration.for('database')  
   db = PgClient.new(db_config)
+
+  #storage class instantiate
+  storage_config = Configuration.for('storage')
+  storage = StorageClient.new(storage_config)
 end
 
 
@@ -67,7 +73,7 @@ options.add_argument('--disable-gpu')
 options.add_argument('--remote-debugging-port=9222')
 
 browser = Watir::Browser.new(:chrome, options: options)
-scraper = ProcessScrape.new(browser, db, es_client)
+scraper = ProcessScrape.new(browser, db, es_client,storage)
 
 blacklist_keyword = ['sleepwear', 'lingerie', 'swimwear', 'uncommon-sense', 'belts', 'tights-socks', 'beauty']
 url = "https://www.nyandcompany.com/sitemap/"
@@ -110,13 +116,18 @@ parent_urls.each do |parent_url|
 
   start_url = db.get_child_urls(parent_url["id"]).to_a
 
-  if start_url.empty?
-    start_url = browser.li(class: ['product','col-3']).links.first.href
-    scraper.start_url = start_url.split('?').first
-  else 
-    scraper.start_url = start_url.first["url"]
-    start_url = start_url.first["url"]
+  begin
+    if start_url.empty?
+      start_url = browser.li(class: ['product','col-3']).links.first.href
+      scraper.start_url = start_url.split('?').first
+    else 
+      scraper.start_url = start_url.first["url"]
+      start_url = start_url.first["url"]
+    end
+  rescue => exception
+    next
   end
+
 
   
   puts parent_url
