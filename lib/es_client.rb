@@ -4,9 +4,10 @@ class EsClient
   attr_accessor :client, :index_name, :type_list
 
   def initialize(config = nil)
-    self.type_list = ['shoes', 'jeans', 'bags','shirts',
-                      'pants', 'tops', 'skirts', 'handbags',
-                      'earings', 'dress', 'necklace'
+    self.type_list = ['shoe', 'jeans', 'bag','shirt',
+                      'pant', 'tops', 'skirt', 'handbag',
+                      'earing', 'dress', 'necklace', 'sweater',
+                      'jacket'
                       ]
     if config.nil?
       es_source = ENV['ES_SOURCE'] rescue 'production'
@@ -97,6 +98,10 @@ class EsClient
           },
           site_source: {
             type: "keyword"
+          },
+          last_updated_date: {
+            type: "date",
+            format: "yyyy-MM-dd HH:mm:ss"
           }
         }
       }
@@ -117,9 +122,10 @@ class EsClient
       data_structure[:review]       = datum[:review]
       data_structure[:category]     = datum[:category]
       data_structure[:description]  = datum[:description]
-      cat_type = self.type_list.select{|x| datum[:description].downcase.match?(x)}.first
-      data_structure[:cat_type]     = cat_type.nil? ? 'other' : cat_type
+      cat_type = self.type_list.select{|x| datum[:description].downcase.match?(x)}
+      data_structure[:cat_type]     = cat_type.empty? ? ['other'] : cat_type
       data_structure[:site_source]  = datum[:site_source]
+      data_structure[:last_updated_date] = Time.now.utc.strftime('%Y-%m-%d %H:%M:%S')
 
 
       if !datum[:size].nil?
