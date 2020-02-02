@@ -151,7 +151,7 @@ parent_urls.each do |parent_url|
       child_urls.each do |url|
         begin
           puts "insert #{url}"
-          db.insert_children_url(parent_url['id'], url, 0, nil)
+          db.insert_children_url(parent_url['id'], url, 0, nil, 2)
         rescue
           puts "Child URL Already exist"
         end

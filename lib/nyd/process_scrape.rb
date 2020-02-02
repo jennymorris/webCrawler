@@ -116,7 +116,7 @@ class ProcessScrape
 
         #check if
         if scraped_data != content_url
-          self.db_client.insert_children_url(parent_id, scraped_data[:url], 1, scraped_data.to_json)
+          self.db_client.insert_children_url(parent_id, scraped_data[:url], 1, scraped_data.to_json, 1)
           es_client.index_data([scraped_data])
         end
         
